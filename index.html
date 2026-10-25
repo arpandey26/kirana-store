@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kirana-Hishab | Smart Retail ERP & Hisab System (Fluent UI)</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Segoe UI Variable"', '"Segoe UI"', 'Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            fluent: {
+              brand: '#0F6CBD',
+              brandHover: '#115EA3',
+              brandLight: '#EBF3FC',
+              bg: '#F5F5F5',
+              surface: '#FFFFFF',
+              subtle: '#FAFAFA',
+              stroke: '#E0E0E0',
+              text: '#242424',
+              muted: '#616161',
+              success: '#107C10',
+              successBg: '#DFF6DD',
+              warning: '#D83B01',
+              warningBg: '#FFF4CE',
+              danger: '#C50F1F',
+              dangerBg: '#FDE7E9',
+              purple: '#5C2E91',
+              purpleBg: '#F3EDF7'
+            }
+          },
+          boxShadow: {
+            'fluent-2': '0 1px 2px rgba(0,0,0,0.08), 0 0 2px rgba(0,0,0,0.06)',
+            'fluent-4': '0 2px 4px rgba(0,0,0,0.10), 0 0 2px rgba(0,0,0,0.08)',
+            'fluent-8': '0 4px 8px rgba(0,0,0,0.12), 0 0 2px rgba(0,0,0,0.08)',
+            'fluent-16': '0 8px 16px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12)',
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="css/fluent.css" />
+</head>
+<body class="min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP FLUENT APPLICATION SUITE HEADER (M365 / Dynamics 365 Style) -->
+  <header class="h-14 fluent-mica border-b border-neutral-200 dark:border-neutral-800 sticky top-0 z-40 px-3 sm:px-5 flex items-center justify-between gap-2">
+    <!-- Left: App Waffle + Brand + Shop Selector -->
+    <div class="flex items-center gap-3 min-w-0">
+      <button id="btnMobileNavToggle" type="button" class="lg:hidden p-2 rounded hover:bg-neutral-200/60 dark:hover:bg-neutral-800" aria-label="Toggle Navigation">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="w-8 h-8 rounded bg-[#0F6CBD] flex items-center justify-center text-white font-bold shadow-sm shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      </div>
+      <div class="truncate">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-base tracking-tight text-[#0F6CBD] dark:text-blue-400">Kirana-Hishab</span>
+          <span class="hidden sm:inline-block text-[11px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/70 text-[#0F6CBD] dark:text-blue-300 border border-blue-200 dark:border-blue-800">Fluent ERP</span>
+        </div>
+        <p id="headerShopTitle" class="text-xs text-neutral-500 dark:text-neutral-400 truncate">Laxmi Narayana Kirana & General Store • GST/Reg: 36AABCU9603R1Z2</p>
+      </div>
+    </div>
+
+    <!-- Center: Global Command Search (Ctrl+K style) -->
+    <div class="hidden md:flex items-center flex-1 max-w-md mx-4">
+      <div class="relative w-full">
+        <svg class="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input id="globalSearchInput" type="text" placeholder="Search products (e.g. Marlboro, Loose Atta, 500gm)..." class="w-full pl-9 pr-4 py-1.5 text-sm rounded-md bg-neutral-100 dark:bg-neutral-800 border border-transparent focus:bg-white dark:focus:bg-neutral-900 focus:border-[#0F6CBD] focus:outline-none transition" />
+      </div>
+    </div>
+
+    <!-- Right: Role Switcher Pill (Owner vs Shop Operator) + Theme Toggle -->
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+      <!-- Live Role Switcher -->
+      <div class="flex items-center bg-neutral-100 dark:bg-neutral-800 p-1 rounded-md border border-neutral-200 dark:border-neutral-700">
+        <span class="hidden xl:inline text-[11px] font-medium text-neutral-500 dark:text-neutral-400 px-2">Active Seat:</span>
+        <select id="roleSelector" aria-label="Switch Active User Role" class="text-xs sm:text-sm font-semibold bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-100 rounded px-2.5 py-1 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:border-[#0F6CBD] cursor-pointer">
+          <!-- Populated dynamically by JS -->
+        </select>
+      </div>
+
+      <!-- Privacy Mask Toggle (for Owner sitting with customers) -->
+      <button id="btnTogglePrivacy" type="button" title="Mask/Unmask Cost & Profit Figures" class="p-2 rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-xs font-medium flex items-center gap-1.5">
+        <svg id="iconPrivacyEye" class="w-4 h-4 text-[#0F6CBD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        <span id="labelPrivacyToggle" class="hidden sm:inline">Margins Visible</span>
+      </button>
+
+      <!-- Dark Mode Button -->
+      <button id="btnToggleDark" type="button" title="Switch Fluent Light/Dark Theme" class="p-2 rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700" aria-label="Toggle Dark Theme">
+        <svg class="w-4 h-4 text-neutral-700 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      </button>
+
+      <!-- Audit / Sales Ledger button -->
+      <button id="btnAudit" type="button" title="View Sales Audit Ledger" class="hidden sm:flex p-2 rounded-md border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/60 hover:bg-violet-100 dark:hover:bg-violet-900/60 text-xs font-semibold text-violet-700 dark:text-violet-300 items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <span class="hidden md:inline">Sales Audit</span>
+      </button>
+
+      <!-- Sign Out Button -->
+      <button id="btnSignOut" type="button" title="Sign Out" class="p-2 rounded-md border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/50 hover:bg-red-100 dark:hover:bg-red-900/50 text-xs font-semibold text-red-600 dark:text-red-400 flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <span class="hidden sm:inline">Sign Out</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ROLE BANNER (Shows clearly when Operator / Staff is sitting at the counter vs Owner watching remotely) -->
+  <div id="roleStatusBanner" class="bg-[#EBF3FC] dark:bg-blue-950/60 border-b border-blue-200 dark:border-blue-900 px-4 py-1.5 text-xs flex flex-wrap items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
+      <span id="roleBadgeDot" class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+      <span id="roleBannerText" class="font-medium text-neutral-800 dark:text-neutral-200">
+        <strong>Owner Full Visibility Mode:</strong> You can track total capital invested, exact wholesale costs, net profit gained, dead-stock alerts, and every sale logged by your shop operator.
+      </span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="liveClockDisplay" class="text-[11px] font-mono text-neutral-600 dark:text-neutral-400"></span>
+      <button id="btnQuickSwitchRole" type="button" class="text-[#0F6CBD] dark:text-blue-400 font-semibold underline hover:no-underline">
+        Test Counter Guy View →
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN WORKSPACE CONTAINER -->
+  <div class="flex-1 flex overflow-hidden">
+    <!-- LEFT FLUENT NAVIGATION RAIL -->
+    <aside id="sidebarNav" class="w-64 shrink-0 bg-white dark:bg-[#1A1A1A] border-r border-neutral-200 dark:border-neutral-800 flex flex-col justify-between p-3 hidden lg:flex">
+      <div class="space-y-1">
+        <div class="px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-400">Operations & Counter</div>
+        <button type="button" data-tab="dashboard" class="fluent-nav-item active w-full text-left">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <span>Owner Hisab Dashboard</span>
+        </button>
+        <button type="button" data-tab="pos" class="fluent-nav-item w-full text-left">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span>Counter Sale / Billing (POS)</span>
+        </button>
+        <button type="button" data-tab="inventory" class="fluent-nav-item w-full text-left">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span>Godown & Product Stock</span>
+        </button>
+
+        <div class="pt-3 px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-400">Analysis & Control</div>
+        <button type="button" data-tab="deadstock" class="fluent-nav-item w-full text-left justify-between">
+          <span class="flex items-center gap-2.5">
+            <svg class="w-4 h-4 shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <span>Unsold / Dead-Stock</span>
+          </span>
+          <span id="badgeDeadStockCount" class="px-1.5 py-0.5 text-[11px] font-bold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200">0</span>
+        </button>
+        <button type="button" data-tab="staff" class="fluent-nav-item w-full text-left">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span>Shop Account & Staff</span>
+        </button>
+
+      </div>
+
+      <!-- Bottom Quick Calculator / Summary Card in Sidebar -->
+      <div class="p-3 rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-semibold uppercase text-neutral-500">Quick Profit Sim</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-semibold">Live</span>
+        </div>
+        <p class="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
+          Supports <strong>Packet vs Single Stick</strong> split, <strong>Packaged Weight</strong> (500g/1kg), and <strong>Loose Bulk</strong> (Atta/Rice per kg).
+        </p>
+        <button id="btnOpenAddProductModalSidebar" type="button" class="fluent-btn-primary w-full text-xs py-1.5">
+          + Add New Stock Item
+        </button>
+      </div>
+    </aside>
+
+    <!-- MOBILE BOTTOM/DRAWER NAV -->
+    <div id="mobileNavDrawer" class="fixed inset-0 z-50 bg-black/40 hidden lg:hidden">
+      <div class="w-64 h-full bg-white dark:bg-neutral-900 p-4 flex flex-col justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800">
+            <span class="font-bold text-[#0F6CBD]">Kirana-Hishab Navigation</span>
+            <button id="btnCloseMobileNav" type="button" class="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800">✕</button>
+          </div>
+          <button type="button" data-tab="dashboard" class="fluent-nav-item active w-full text-left">Owner Hisab Dashboard</button>
+          <button type="button" data-tab="pos" class="fluent-nav-item w-full text-left">Counter Sale / Billing (POS)</button>
+          <button type="button" data-tab="inventory" class="fluent-nav-item w-full text-left">Godown & Product Stock</button>
+          <button type="button" data-tab="deadstock" class="fluent-nav-item w-full text-left">Unsold / Dead-Stock Alerts</button>
+          <button type="button" data-tab="staff" class="fluent-nav-item w-full text-left">Shop Account & Staff</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT SCROLLABLE VIEWPORT -->
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 max-w-[1600px] mx-auto w-full">
+
+      <!-- FLUENT COMMAND BAR (Contextual Action Ribbon) -->
+      <div class="fluent-card px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="btnCommandAddProduct" type="button" class="fluent-btn-primary text-xs sm:text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Add Product / Stock</span>
+          </button>
+          <button id="btnCommandQuickSale" type="button" class="fluent-btn-secondary text-xs sm:text-sm">
+            <svg class="w-4 h-4 text-[#0F6CBD]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>New Counter Sale</span>
+          </button>
+          <button id="btnCommandExportCSV" type="button" class="fluent-btn-secondary text-xs sm:text-sm">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>Export Hisab CSV</span>
+          </button>
+        </div>
+
+        <!-- Period Filter (Today vs Monthly vs All-Time) -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-medium text-neutral-500">Hisab Period:</span>
+          <div class="inline-flex rounded-md border border-neutral-300 dark:border-neutral-700 overflow-hidden bg-neutral-100 dark:bg-neutral-800 p-0.5">
+            <button type="button" data-period="today" class="period-filter-btn px-3 py-1 text-xs font-semibold rounded bg-white dark:bg-neutral-900 text-[#0F6CBD] shadow-sm">Today</button>
+            <button type="button" data-period="month" class="period-filter-btn px-3 py-1 text-xs font-semibold rounded text-neutral-600 dark:text-neutral-300">This Month</button>
+            <button type="button" data-period="all" class="period-filter-btn px-3 py-1 text-xs font-semibold rounded text-neutral-600 dark:text-neutral-300">All Time</button>
+          </div>
+          <button id="btnResetDemoData" type="button" title="Reset sample Kirana data" class="text-xs text-neutral-500 hover:text-red-600 px-2 py-1 rounded">Reset Demo</button>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           VIEW 1: OWNER HISAB DASHBOARD
+           ===================================================================== -->
+      <section id="view-dashboard" class="space-y-6">
+        <!-- Top 4 KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <!-- Card 1: Total Capital Invested -->
+          <div class="fluent-card p-4 border-l-4 border-l-[#0F6CBD]">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Total Capital Invested</span>
+              <span class="p-1.5 rounded bg-blue-50 dark:bg-blue-950 text-[#0F6CBD]">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </span>
+            </div>
+            <div id="kpiTotalInvested" class="text-2xl font-bold mt-2">₹0</div>
+            <div class="mt-2 flex items-center justify-between text-xs text-neutral-500">
+              <span>Current Stock Value: <strong id="kpiCurrentStockValue" class="text-neutral-800 dark:text-neutral-200">₹0</strong></span>
+              <span class="text-[#0F6CBD] font-medium">Purchase Cost</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Sales Revenue (Gained Gross) -->
+          <div class="fluent-card p-4 border-l-4 border-l-indigo-600">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Sales Turnover (Cash/UPI)</span>
+              <span class="p-1.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              </span>
+            </div>
+            <div id="kpiPeriodRevenue" class="text-2xl font-bold mt-2">₹0</div>
+            <div class="mt-2 flex items-center justify-between text-xs text-neutral-500">
+              <span>Cost of Sold Goods: <strong id="kpiPeriodCOGS" class="text-neutral-800 dark:text-neutral-200">₹0</strong></span>
+              <span id="kpiTxCount" class="font-medium text-indigo-600">0 bills</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Net Profit Earned -->
+          <div class="fluent-card p-4 border-l-4 border-l-emerald-600">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Net Profit Gained (Munafa)</span>
+              <span class="p-1.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+              </span>
+            </div>
+            <div id="kpiPeriodProfit" class="text-2xl font-bold text-emerald-700 dark:text-emerald-400 mt-2">₹0</div>
+            <div class="mt-2 flex items-center justify-between text-xs text-neutral-500">
+              <span>Realized Margin: <strong id="kpiProfitMarginPct" class="text-emerald-700 dark:text-emerald-400">0%</strong></span>
+              <span>Projected Stock Profit: <strong id="kpiProjectedStockProfit">₹0</strong></span>
+            </div>
+          </div>
+
+          <!-- Card 4: Unsold / Dead-Stock Capital Locked -->
+          <div class="fluent-card p-4 border-l-4 border-l-amber-600">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Dead-Stock / Unsold Alert</span>
+              <span class="p-1.5 rounded bg-amber-50 dark:bg-amber-950 text-amber-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </span>
+            </div>
+            <div id="kpiDeadStockValue" class="text-2xl font-bold text-amber-700 dark:text-amber-400 mt-2">₹0</div>
+            <div class="mt-2 flex items-center justify-between text-xs text-neutral-500">
+              <span id="kpiDeadStockItemsLabel">0 products stuck</span>
+              <button type="button" data-goto-tab="deadstock" class="text-[#0F6CBD] font-semibold hover:underline">Inspect Unsold →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Three Pricing Archetype Interactive Showcase (Marlboro Dual-Split, Packaged Atta, Loose Atta) -->
+        <div class="fluent-card p-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-neutral-200 dark:border-neutral-800">
+            <div>
+              <h2 class="text-base font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                <span>Smart Kirana Margin Engine — Live Product Archetypes</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950 text-[#0F6CBD] font-semibold">Auto-Calculated</span>
+              </h2>
+              <p class="text-xs text-neutral-500 mt-0.5">See how Kirana-Hishab automatically handles Packet vs Single-Stick margins, Packaged Weight SKUs, and Loose Bulk per-kg/gram sales.</p>
+            </div>
+            <button type="button" data-goto-tab="pos" class="fluent-btn-primary text-xs">Open Billing Counter →</button>
+          </div>
+
+          <div id="archetypeCardsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <!-- Populated dynamically from actual live inventory items -->
+          </div>
+        </div>
+
+        <!-- Charts & Live Operator Activity Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left 2 Cols: Revenue vs Cost vs Profit Chart -->
+          <div class="fluent-card p-5 lg:col-span-2 flex flex-col justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div>
+                <h3 class="text-sm font-bold text-neutral-800 dark:text-neutral-100">Product-Wise Investment vs Revenue & Profit Breakdown</h3>
+                <p class="text-xs text-neutral-500">Compare how much money is invested in each product vs actual sales & profit earned</p>
+              </div>
+              <span class="text-xs font-medium px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">Live Fluent Chart</span>
+            </div>
+            <div class="relative h-72 w-full">
+              <canvas id="hisabBarChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Right 1 Col: Live Shop Operator / Counter Activity Feed -->
+          <div class="fluent-card p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800">
+                <div>
+                  <h3 class="text-sm font-bold text-neutral-800 dark:text-neutral-100">Live Counter Audit Log</h3>
+                  <p class="text-xs text-neutral-500">Track what your shop operator sold in real time</p>
+                </div>
+                <span class="px-2 py-0.5 text-[11px] font-semibold rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Synced</span>
+              </div>
+              <div id="dashboardAuditFeed" class="mt-3 space-y-2.5 max-h-64 overflow-y-auto pr-1">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+            <div class="pt-3 mt-3 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between text-xs">
+              <span class="text-neutral-500">Operator accountability enabled</span>
+              <button type="button" data-goto-tab="staff" class="text-[#0F6CBD] font-semibold hover:underline">Manage Staff Access →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 2: COUNTER SALE / BILLING (POS)
+           ===================================================================== -->
+      <section id="view-pos" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left 2 Columns: Product Selector & Smart Unit/Weight Calculator -->
+          <div class="lg:col-span-2 space-y-4">
+            <div class="fluent-card p-4">
+              <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <div>
+                  <h2 class="text-base font-bold">Fast Kirana Counter Billing (POS)</h2>
+                  <p class="text-xs text-neutral-500">Tap any item to sell by <strong>Full Packet</strong>, <strong>Single Loose Unit</strong>, <strong>Custom Weight (g/kg)</strong>, or <strong>Custom ₹ Value</strong> (e.g., "₹35 ka loose atta de do").</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <select id="posCategoryFilter" aria-label="Filter POS Products by Type" class="fluent-input !w-auto !py-1 text-xs">
+                    <option value="ALL">All Product Types</option>
+                    <option value="PACKET_LOOSE">Packet + Single Unit Split</option>
+                    <option value="PACKAGED_WEIGHT">Packaged Weight SKU</option>
+                    <option value="LOOSE_BULK">Loose Bulk Commodity (kg/g)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- POS Product Cards Grid -->
+              <div id="posProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right 1 Column: Active Customer Bill / Cart & Instant Profit Preview -->
+          <div class="fluent-card p-5 flex flex-col justify-between h-fit sticky top-20">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800">
+                <div>
+                  <h3 class="text-base font-bold">Current Customer Bill</h3>
+                  <p id="posOperatorAttribution" class="text-xs text-neutral-500">Billed by: Ramesh (Counter Operator)</p>
+                </div>
+                <button id="btnClearCart" type="button" class="text-xs text-red-600 hover:underline font-medium">Clear Bill</button>
+              </div>
+
+              <!-- Cart Items List -->
+              <div id="posCartItemsList" class="my-4 space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <div class="space-y-3 pt-3 border-t border-neutral-200 dark:border-neutral-800">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label for="posCustomerName" class="block text-[11px] font-semibold text-neutral-500 mb-1">Customer Name (Optional)</label>
+                  <input id="posCustomerName" type="text" placeholder="Walk-in Customer" class="fluent-input !py-1.5 text-xs" />
+                </div>
+                <div>
+                  <label for="posPaymentMode" class="block text-[11px] font-semibold text-neutral-500 mb-1">Payment Mode</label>
+                  <select id="posPaymentMode" class="fluent-input !py-1.5 text-xs">
+                    <option value="Cash">Cash Counter (Galla)</option>
+                    <option value="UPI / QR">PhonePe / GPay UPI</option>
+                    <option value="Udhaar (Credit)">Khata / Udhaar</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Totals Box -->
+              <div class="p-3 rounded-md bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 space-y-1.5">
+                <div class="flex justify-between text-xs text-neutral-500">
+                  <span>Items Wholesale Cost:</span>
+                  <span id="cartTotalCost" class="font-medium">₹0.00</span>
+                </div>
+                <div id="cartProfitRow" class="flex justify-between text-xs text-emerald-700 dark:text-emerald-400 font-semibold">
+                  <span>Instant Profit on this Bill:</span>
+                  <span id="cartTotalProfit">+₹0.00</span>
+                </div>
+                <div class="flex justify-between text-base font-bold text-neutral-900 dark:text-white pt-1 border-t border-neutral-200 dark:border-neutral-800">
+                  <span>Customer Payable:</span>
+                  <span id="cartTotalPayable" class="text-[#0F6CBD] dark:text-blue-400">₹0.00</span>
+                </div>
+              </div>
+
+              <button id="btnCompleteSale" type="button" class="fluent-btn-primary w-full py-2.5 text-sm shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span>Complete Sale & Record Hisab</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 3: GODOWN & PRODUCT STOCK TABLE
+           ===================================================================== -->
+      <section id="view-inventory" class="hidden space-y-6">
+        <div class="fluent-card p-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-neutral-200 dark:border-neutral-800">
+            <div>
+              <h2 class="text-base font-bold">Complete Godown & Shop Inventory Ledger</h2>
+              <p class="text-xs text-neutral-500">Full visibility into wholesale purchase costs, packet vs single-unit margins, remaining stock, and profit earned per item.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="btnOpenAddProductModalInventory" type="button" class="fluent-btn-primary text-xs">
+                + Add Product to Inventory
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto mt-4">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 bg-neutral-50 dark:bg-neutral-900/50">
+                  <th class="py-3 px-3">Product & SKU Model</th>
+                  <th class="py-3 px-3">Wholesale Buy Cost</th>
+                  <th class="py-3 px-3">Selling Price & Margin</th>
+                  <th class="py-3 px-3">Current Stock Remaining</th>
+                  <th class="py-3 px-3 text-right">Stock Capital</th>
+                  <th class="py-3 px-3 text-right">Realized Profit</th>
+                  <th class="py-3 px-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody" class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 4: UNSOLD / DEAD-STOCK RADAR
+           ===================================================================== -->
+      <section id="view-deadstock" class="hidden space-y-6">
+        <div class="fluent-card p-5 border-l-4 border-l-amber-500">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 class="text-base font-bold flex items-center gap-2">
+                <span>Unsold & Slow-Moving Stock Radar (Capital Stuck Detection)</span>
+              </h2>
+              <p class="text-xs text-neutral-500 mt-0.5">Identify which products are not getting sold so you can run a clearance discount or stop re-ordering them.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label for="deadStockThresholdSelect" class="text-xs font-medium text-neutral-600 dark:text-neutral-300">Flag items unsold for:</label>
+              <select id="deadStockThresholdSelect" class="fluent-input !w-auto !py-1 text-xs">
+                <option value="0">0 Sales Today (All Unsold Today)</option>
+                <option value="3">3+ Days Without Sale</option>
+                <option value="7" selected>7+ Days Without Sale</option>
+                <option value="14">14+ Days Without Sale</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="deadStockCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           VIEW 5: SHOP ACCOUNT & MULTI-USER STAFF MANAGEMENT
+           ===================================================================== -->
+      <section id="view-staff" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Shop Registration & Profile Form -->
+          <div class="fluent-card p-5 space-y-4">
+            <div class="pb-3 border-b border-neutral-200 dark:border-neutral-800">
+              <h2 class="text-base font-bold">Registered Shop Account Details</h2>
+              <p class="text-xs text-neutral-500">Update your Kirana store profile, GST/license number, and owner contact details.</p>
+            </div>
+
+            <form id="shopProfileForm" class="space-y-3">
+              <div>
+                <label for="inputShopName" class="block text-xs font-semibold mb-1">Shop / Enterprise Name</label>
+                <input id="inputShopName" type="text" required class="fluent-input" />
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="inputOwnerName" class="block text-xs font-semibold mb-1">Primary Owner Name</label>
+                  <input id="inputOwnerName" type="text" required class="fluent-input" />
+                </div>
+                <div>
+                  <label for="inputShopPhone" class="block text-xs font-semibold mb-1">Owner Mobile / WhatsApp</label>
+                  <input id="inputShopPhone" type="text" required class="fluent-input" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="inputShopGST" class="block text-xs font-semibold mb-1">GSTIN / Udyam Reg No.</label>
+                  <input id="inputShopGST" type="text" class="fluent-input" />
+                </div>
+                <div>
+                  <label for="inputShopCity" class="block text-xs font-semibold mb-1">Location / Market Area</label>
+                  <input id="inputShopCity" type="text" class="fluent-input" />
+                </div>
+              </div>
+              <div class="pt-2">
+                <button type="submit" class="fluent-btn-primary">Save Shop Account Details</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Multi-User Staff / Operator Access Management -->
+          <div class="fluent-card p-5 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800">
+              <div>
+                <h2 class="text-base font-bold">Shop Operators & Multi-Device Access</h2>
+                <p class="text-xs text-neutral-500">Add the guy sitting at your shop counter. He operates POS billing while you track everything remotely.</p>
+              </div>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded bg-blue-50 text-[#0F6CBD]">Role-Based</span>
+            </div>
+
+            <!-- Add New Operator Form -->
+            <form id="addStaffForm" class="space-y-2 bg-neutral-50 dark:bg-neutral-900 p-3 rounded-md border border-neutral-200 dark:border-neutral-800">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input id="inputStaffName" type="text" required placeholder="Operator Name (e.g. Chotu / Munim)" class="fluent-input text-xs" />
+                <input id="inputStaffPassword" type="email" required placeholder="Staff Email (for login)" class="fluent-input text-xs" />
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <select id="inputStaffRole" aria-label="Select Operator Role" class="fluent-input text-xs">
+                  <option value="OPERATOR">Shop Counter Guy (Sales & Stock Add Only)</option>
+                  <option value="MANAGER">Store Manager (Can Edit Prices)</option>
+                  <option value="OWNER">Co-Owner (Full Profit & Cost Visibility)</option>
+                </select>
+                <button type="submit" class="fluent-btn-primary text-xs">+ Grant Shop Access</button>
+              </div>
+            </form>
+
+            <!-- Staff List -->
+            <div id="staffMembersList" class="space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+    </main>
+  </div>
+
+  <!-- =====================================================================
+       LOGIN SCREEN OVERLAY
+       ===================================================================== -->
+  <div id="loginOverlay" class="fixed inset-0 z-[999] flex items-center justify-center p-4" style="background: linear-gradient(135deg, #0a2a4a 0%, #0F6CBD 60%, #1a3a5c 100%);">
+    <div class="w-full max-w-sm">
+      <!-- Logo & Branding -->
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <svg class="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        </div>
+        <h1 class="text-3xl font-bold text-white tracking-tight">Kirana-Hishab</h1>
+        <p class="text-blue-200 text-sm mt-1">Smart Retail ERP & Profit Accounting</p>
+      </div>
+
+      <!-- Login Card -->
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/20">
+        <div id="loginError" class="hidden mb-4 p-3 rounded-lg bg-red-500/20 border border-red-400/40 text-red-100 text-xs font-medium text-center"></div>
+
+        <form id="loginForm" class="space-y-4">
+          <div>
+            <label for="loginEmail" class="block text-xs font-semibold text-blue-100 mb-1.5">Email Address</label>
+            <input id="loginEmail" type="email" required placeholder="your@email.com" class="w-full px-3 py-2.5 rounded-lg bg-white/10 border border-white/25 text-white text-sm focus:outline-none focus:border-white/60 focus:bg-white/20 transition placeholder-blue-300" />
+          </div>
+          <div>
+            <label for="loginPassword" class="block text-xs font-semibold text-blue-100 mb-1.5">Password</label>
+            <input id="loginPassword" type="password" required placeholder="Enter your password" class="w-full px-3 py-2.5 rounded-lg bg-white/10 border border-white/25 text-white text-sm focus:outline-none focus:border-white/60 focus:bg-white/20 transition placeholder-blue-300" />
+          </div>
+          <button type="submit" id="btnLogin" class="w-full py-2.5 rounded-lg bg-white text-[#0F6CBD] font-bold text-sm hover:bg-blue-50 active:scale-95 transition-all shadow-md mt-2">
+            Sign In to Shop Dashboard
+          </button>
+        </form>
+
+        <p class="text-center text-blue-200/60 text-[11px] mt-4">Sign in with your Firebase email &amp; password</p>
+
+        <div class="mt-5 pt-4 border-t border-white/15 text-center">
+          <p class="text-blue-200/70 text-xs">New to Kirana-Hishab?</p>
+          <button type="button" id="btnRegisterShop" class="mt-2 w-full py-2 rounded-lg border border-white/30 text-white text-sm font-semibold hover:bg-white/10 active:scale-95 transition-all">
+            ✨ Register Your Shop — Free
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 1: ADD / EDIT PRODUCT MODAL (SUPPORTS ALL 3 KIRANA PRICING MODELS)
+       ===================================================================== -->
+  <div id="modalAddProduct" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="fluent-card w-full max-w-2xl max-h-[92vh] overflow-y-auto p-6 shadow-fluent-16">
+      <div class="flex items-center justify-between pb-3 border-b border-neutral-200 dark:border-neutral-800">
+        <div>
+          <h3 id="modalProductTitle" class="text-base font-bold">Add Product to Shop Inventory</h3>
+          <p class="text-xs text-neutral-500">Choose how you buy and sell this product so Kirana-Hishab calculates exact profit automatically.</p>
+        </div>
+        <button id="btnCloseProductModal" type="button" class="p-1.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-500">✕</button>
+      </div>
+
+      <form id="formAddProduct" class="space-y-4 mt-4">
+        <input id="prodEditId" type="hidden" value="" />
+
+        <!-- Step 1: Select Pricing Model -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2">1. Select Product Selling Mode</label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <label class="cursor-pointer border rounded-lg p-3 flex flex-col gap-1 transition hover:border-[#0F6CBD] has-[:checked]:border-[#0F6CBD] has-[:checked]:bg-blue-50/60 dark:has-[:checked]:bg-blue-950/40">
+              <div class="flex items-center gap-2">
+                <input type="radio" name="prodType" value="PACKET_LOOSE" checked class="accent-[#0F6CBD]" />
+                <span class="text-xs font-bold">Packet + Single Loose</span>
+              </div>
+              <span class="text-[11px] text-neutral-500">E.g. Marlboro Ice Blast (Buy 10 packets, sell full packet OR single stick)</span>
+            </label>
+
+            <label class="cursor-pointer border rounded-lg p-3 flex flex-col gap-1 transition hover:border-[#0F6CBD] has-[:checked]:border-[#0F6CBD] has-[:checked]:bg-blue-50/60 dark:has-[:checked]:bg-blue-950/40">
+              <div class="flex items-center gap-2">
+                <input type="radio" name="prodType" value="PACKAGED_WEIGHT" class="accent-[#0F6CBD]" />
+                <span class="text-xs font-bold">Packaged Weight SKU</span>
+              </div>
+              <span class="text-[11px] text-neutral-500">E.g. Atta 500gm / 1kg / 5kg sealed packets, biscuits, soap</span>
+            </label>
+
+            <label class="cursor-pointer border rounded-lg p-3 flex flex-col gap-1 transition hover:border-[#0F6CBD] has-[:checked]:border-[#0F6CBD] has-[:checked]:bg-blue-50/60 dark:has-[:checked]:bg-blue-950/40">
+              <div class="flex items-center gap-2">
+                <input type="radio" name="prodType" value="LOOSE_BULK" class="accent-[#0F6CBD]" />
+                <span class="text-xs font-bold">Loose Bulk (Per Kg/Gm)</span>
+              </div>
+              <span class="text-[11px] text-neutral-500">E.g. Loose Chakki Atta, Loose Rice, Sugar, Dal sold by weight</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 2: Basic Details -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="prodNameInput" class="block text-xs font-semibold mb-1">Product Name *</label>
+            <input id="prodNameInput" type="text" required placeholder="e.g., Marlboro Ice Blast / Chakki Fresh Atta" class="fluent-input" />
+          </div>
+          <div>
+            <label for="prodCategoryInput" class="block text-xs font-semibold mb-1">Category / Rack</label>
+            <input id="prodCategoryInput" type="text" placeholder="e.g., Cigarettes & Pan / Staples & Grains" class="fluent-input" />
+          </div>
+        </div>
+
+        <!-- Dynamic Fields Group A: PACKET_LOOSE -->
+        <div id="fieldsPacketLoose" class="p-4 rounded-lg bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 space-y-3">
+          <div class="text-xs font-bold text-[#0F6CBD] dark:text-blue-400">Packet + Single Loose Unit Configuration (e.g., Marlboro Ice Blast)</div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div>
+              <label for="plPacketsCount" class="block text-[11px] font-semibold mb-1">Full Packets Bought (Qty)</label>
+              <input id="plPacketsCount" type="number" step="1" min="0" value="10" class="fluent-input calc-trigger" />
+            </div>
+            <div>
+              <label for="plUnitsPerPacket" class="block text-[11px] font-semibold mb-1">Sticks/Units in 1 Packet</label>
+              <input id="plUnitsPerPacket" type="number" step="1" min="1" value="20" class="fluent-input calc-trigger" />
+            </div>
+            <div>
+              <label for="plLooseCount" class="block text-[11px] font-semibold mb-1">Extra Open Loose Units</label>
+              <input id="plLooseCount" type="number" step="1" min="0" value="0" class="fluent-input calc-trigger" />
+            </div>
+            <div>
+              <label for="plPacketBuyCost" class="block text-[11px] font-semibold mb-1">1 Packet Buy Cost (₹)</label>
+              <input id="plPacketBuyCost" type="number" step="0.01" min="0" value="310" class="fluent-input calc-trigger" />
+            </div>
+            <div>
+              <label for="plPacketSellPrice" class="block text-[11px] font-semibold mb-1">1 Packet Sell Price (₹)</label>
+              <input id="plPacketSellPrice" type="number" step="0.01" min="0" value="340" class="fluent-input calc-trigger" />
+            </div>
+            <div>
+              <label for="plSingleSellPrice" class="block text-[11px] font-semibold mb-1">1 Single Stick Sell Price (₹)</label>
+              <input id="plSingleSellPrice" type="number" step="0.01" min="0" value="18" class="fluent-input calc-trigger" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Fields Group B: PACKAGED_WEIGHT -->
+        <div id="fieldsPackagedWeight" class="hidden p-4 rounded-lg bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900 space-y-3">
+          <div class="text-xs font-bold text-indigo-700 dark:text-indigo-300">Packaged Weight / Size Configuration (e.g., Atta 500gm or 1kg Packet)</div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <label for="pwVariantLabel" class="block text-[11px] font-semibold mb-1">Pack Weight / Size</label>
+              <input id="pwVariantLabel" type="text" value="500gm Packet" placeholder="e.g. 500gm / 1kg / 5kg" class="fluent-input calc-trigger" />
+            </div>
+            <div>
+              <label for="pwStockQty" class="block text-[11px] font-semibold mb-1">Packets in Stock</label>
+              <input id="pwStockQty" type="number" step="1" min="0" value="25" class="fluent-input calc-trigger" />
+            </div>
+            <div>
+              <label for="pwBuyCost" class="block text-[11px] font-semibold mb-1">1 Pack Buy Cost (₹)</label>
+              <input id="pwBuyCost" type="number" step="0.01" min="0" value="24" class="fluent-input calc-trigger" />
+            </div>
+            <div>
+              <label for="pwSellPrice" class="block text-[11px] font-semibold mb-1">1 Pack Sell Price (₹)</label>
+              <input id="pwSellPrice" type="number" step="0.01" min="0" value="30" class="fluent-input calc-trigger" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Fields Group C: LOOSE_BULK -->
+        <div id="fieldsLooseBulk" class="hidden p-4 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900 space-y-3">
+          <div class="text-xs font-bold text-emerald-800 dark:text-emerald-300">Loose Bulk Weight Configuration (e.g., Loose Chakki Atta / Rice / Sugar)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label for="lbTotalKg" class="block text-[11px] font-semibold mb-1">Total Quantity Bought (in Kg)</label>
+              <input id="lbTotalKg" type="number" step="0.05" min="0" value="50" class="fluent-input calc-trigger" />
+            </div>
+            <div>
+              <label for="lbBuyCostPerKg" class="block text-[11px] font-semibold mb-1">Buy Cost per 1 Kg (₹)</label>
+              <input id="lbBuyCostPerKg" type="number" step="0.01" min="0" value="34" class="fluent-input calc-trigger" />
+            </div>
+            <div>
+              <label for="lbSellPricePerKg" class="block text-[11px] font-semibold mb-1">Sell Price per 1 Kg (₹)</label>
+              <input id="lbSellPricePerKg" type="number" step="0.01" min="0" value="42" class="fluent-input calc-trigger" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Profit Calculation Preview Box inside Modal -->
+        <div id="modalLiveProfitPreview" class="p-3.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-xs space-y-1">
+          <!-- Populated dynamically by updateModalProfitPreview() -->
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-neutral-200 dark:border-neutral-800">
+          <button id="btnCancelProductModal" type="button" class="fluent-btn-secondary">Cancel</button>
+          <button type="submit" class="fluent-btn-primary">Save Product & Calculate Hisab</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 2: CUSTOM POS SALE DIALOG (Sell Packet vs Loose Stick vs Custom Gram/₹)
+       ===================================================================== -->
+  <div id="modalPosItemConfig" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="fluent-card w-full max-w-md p-5 shadow-fluent-16 space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-neutral-800">
+        <div>
+          <h3 id="posModalProductName" class="text-base font-bold">Add to Customer Bill</h3>
+          <p id="posModalProductSub" class="text-xs text-neutral-500"></p>
+        </div>
+        <button id="btnClosePosConfigModal" type="button" class="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800">✕</button>
+      </div>
+
+      <div id="posModalBody" class="space-y-3">
+        <!-- Injected dynamically based on product type -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       FLUENT TOAST NOTIFICATION CONTAINER
+       ===================================================================== -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+  <!-- =====================================================================
+       MODAL: REGISTER SHOP
+       ===================================================================== -->
+  <div id="registerShopModal" class="fixed inset-0 z-[998] hidden items-center justify-center p-4" style="background:linear-gradient(135deg,#0a2a4a 0%,#0F6CBD 60%,#1a3a5c 100%)">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-6">
+        <div class="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mx-auto mb-3 shadow-lg">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white">Register Your Kirana Store</h2>
+        <p class="text-blue-200 text-sm mt-1">Set up your shop on Kirana-Hishab — free forever</p>
+      </div>
+      <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/20">
+        <div id="regError" class="hidden mb-4 p-3 rounded-lg bg-red-500/20 border border-red-400/40 text-red-100 text-xs font-medium text-center"></div>
+        <form id="registerShopForm" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-blue-100 mb-1.5">Owner / Shop Name</label>
+            <input id="regOwnerName" type="text" required placeholder="e.g. Sandeep — Laxmi Narayana Store" class="w-full px-3 py-2.5 rounded-lg bg-white/10 border border-white/25 text-white text-sm focus:outline-none focus:border-white/60 focus:bg-white/20 transition placeholder-blue-300" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-blue-100 mb-1.5">Email Address (used to login)</label>
+            <input id="regOwnerEmail" type="email" required placeholder="your@email.com" class="w-full px-3 py-2.5 rounded-lg bg-white/10 border border-white/25 text-white text-sm focus:outline-none focus:border-white/60 focus:bg-white/20 transition placeholder-blue-300" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-blue-100 mb-1.5">Password (min 6 characters)</label>
+            <input id="regOwnerPassword" type="password" required minlength="6" placeholder="Choose a strong password" class="w-full px-3 py-2.5 rounded-lg bg-white/10 border border-white/25 text-white text-sm focus:outline-none focus:border-white/60 focus:bg-white/20 transition placeholder-blue-300" />
+          </div>
+          <button type="submit" id="btnRegisterSubmit" class="w-full py-2.5 rounded-lg bg-white text-[#0F6CBD] font-bold text-sm hover:bg-blue-50 active:scale-95 transition-all shadow-md mt-2">
+            Create Shop &amp; Account
+          </button>
+        </form>
+        <button type="button" id="btnBackToLogin" class="mt-4 w-full py-2 rounded-lg border border-white/20 text-blue-200 text-sm hover:bg-white/10 transition">
+          ← Back to Login
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL: SALES AUDIT LEDGER
+       ===================================================================== -->
+  <div id="auditModal" class="fixed inset-0 z-[997] hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="w-full max-w-3xl bg-neutral-900 rounded-2xl border border-neutral-700 shadow-2xl flex flex-col max-h-[85vh]">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-5 py-4 border-b border-neutral-700">
+        <div>
+          <h2 class="text-lg font-bold text-white">📋 Sales Audit Ledger</h2>
+          <p class="text-xs text-neutral-400 mt-0.5">Every sale recorded by your operators — synced from Firestore</p>
+        </div>
+        <button id="closeAudit" class="p-2 rounded-lg hover:bg-neutral-800 text-neutral-400 hover:text-white transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <!-- Table -->
+      <div class="overflow-y-auto flex-1">
+        <table class="w-full table-auto text-sm">
+          <thead class="sticky top-0 bg-neutral-800 text-neutral-300 text-xs uppercase tracking-wider">
+            <tr>
+              <th class="px-3 py-2.5 text-left">Date &amp; Time</th>
+              <th class="px-3 py-2.5 text-left">Product</th>
+              <th class="px-3 py-2.5 text-left">Qty / Mode</th>
+              <th class="px-3 py-2.5 text-right">Revenue</th>
+              <th class="px-3 py-2.5 text-right">Profit</th>
+              <th class="px-3 py-2.5 text-left">Operator &amp; Payment</th>
+            </tr>
+          </thead>
+          <tbody id="auditBody" class="text-neutral-200"></tbody>
+        </table>
+      </div>
+      <!-- Footer -->
+      <div class="px-5 py-3 border-t border-neutral-700 text-xs text-neutral-500 text-right">
+        Showing latest 200 transactions &bull; All data stored in Firebase Firestore
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       APPLICATION JAVASCRIPT ENGINE
+       ===================================================================== -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

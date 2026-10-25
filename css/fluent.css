@@ -1,0 +1,169 @@
+:root {
+      --fluent-brand: #0F6CBD;
+      --fluent-brand-hover: #115EA3;
+    }
+    body {
+      font-family: "Segoe UI Variable", "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #F5F5F5;
+      color: #242424;
+      overflow-x: hidden;
+    }
+    .dark body {
+      background-color: #141414;
+      color: #F5F5F5;
+    }
+    /* Fluent 2 Acrylic & Mica effects */
+    .fluent-mica {
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+    }
+    .dark .fluent-mica {
+      background: rgba(28, 28, 28, 0.88);
+    }
+    .fluent-card {
+      background: #FFFFFF;
+      border: 1px solid #E0E0E0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06), 0 0 2px rgba(0,0,0,0.04);
+      transition: all 0.16s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+    .dark .fluent-card {
+      background: #1F1F1F;
+      border-color: #333333;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+    }
+    .fluent-card-interactive:hover {
+      border-color: #B4D6FA;
+      box-shadow: 0 4px 12px rgba(15, 108, 189, 0.10), 0 0 2px rgba(0,0,0,0.08);
+      transform: translateY(-1px);
+    }
+    .dark .fluent-card-interactive:hover {
+      border-color: #286EA8;
+    }
+    /* Fluent 2 Bottom-border Input */
+    .fluent-input {
+      background: #FFFFFF;
+      border: 1px solid #D1D1D1;
+      border-bottom: 2px solid #8A8886;
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      width: 100%;
+    }
+    .dark .fluent-input {
+      background: #292929;
+      border-color: #444444;
+      border-bottom-color: #777777;
+      color: #F5F5F5;
+    }
+    .fluent-input:focus {
+      outline: none;
+      border-color: #0F6CBD;
+      border-bottom: 2px solid #0F6CBD;
+      box-shadow: 0 1px 0 0 #0F6CBD;
+    }
+    /* Fluent Navigation Active Pill */
+    .fluent-nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.55rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #424242;
+      transition: background-color 0.12s ease, color 0.12s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .dark .fluent-nav-item {
+      color: #D6D6D6;
+    }
+    .fluent-nav-item:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+    .dark .fluent-nav-item:hover {
+      background-color: rgba(255, 255, 255, 0.06);
+    }
+    .fluent-nav-item.active {
+      background-color: #EBF3FC;
+      color: #0F6CBD;
+      font-weight: 600;
+    }
+    .dark .fluent-nav-item.active {
+      background-color: rgba(15, 108, 189, 0.25);
+      color: #62B0F6;
+    }
+    .fluent-nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 22%;
+      height: 56%;
+      width: 3px;
+      background-color: #0F6CBD;
+      border-radius: 4px;
+    }
+    .fluent-btn-primary {
+      background-color: #0F6CBD;
+      color: #FFFFFF;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      transition: background-color 0.12s ease, transform 0.08s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+    .fluent-btn-primary:hover {
+      background-color: #115EA3;
+    }
+    .fluent-btn-primary:active {
+      transform: scale(0.985);
+    }
+    .fluent-btn-secondary {
+      background-color: #FFFFFF;
+      color: #242424;
+      border: 1px solid #D1D1D1;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      transition: background-color 0.12s ease, border-color 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+    .dark .fluent-btn-secondary {
+      background-color: #292929;
+      color: #F5F5F5;
+      border-color: #444444;
+    }
+    .fluent-btn-secondary:hover {
+      background-color: #F5F5F5;
+      border-color: #C7C7C7;
+    }
+    .dark .fluent-btn-secondary:hover {
+      background-color: #333333;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(120, 120, 120, 0.35);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(120, 120, 120, 0.55);
+    }

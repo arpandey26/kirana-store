@@ -1,0 +1,11 @@
+{
+  "name": "kirana-hishab-fluent",
+  "version": "1.0.0",
+  "description": "Kirana-Hishab Smart Retail ERP, Inventory & Profit Accounting Web App (Fluent 2 UI)",
+  "scripts": {
+    "start": "npx --yes serve . -l 3000",
+    "dev": "python3 -m http.server 8080"
+  },
+  "keywords": ["kirana", "hisab", "inventory", "pos", "fluent-ui"],
+  "license": "MIT"
+}
